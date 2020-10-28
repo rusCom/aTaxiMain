@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CacheDB">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/CacheDB.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
