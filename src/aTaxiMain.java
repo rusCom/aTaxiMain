@@ -107,7 +107,7 @@ public class aTaxiMain {
                                 notification.put("body", baseMessage.getString("body"));
                                 message.put("notification", notification);
                             }
-                            JSONObject respJSON = httpPost("https://fcm.googleapis.com/fcm/send", message.toString(), "key=" + baseMessage.getString("destenation"));
+                            JSONObject respJSON = httpPost("https://fcm.googleapis.com/fcm/send", message.toString(), "key=" + baseMessage.getString("key"));
                             System.out.println("response: " + respJSON.toString());
                             API.SMSC.SetSended(dataBase, baseMessage.getString("id"), "0", "0", "0");
 
