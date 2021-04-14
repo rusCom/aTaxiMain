@@ -10,9 +10,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 
 import static java.lang.Thread.sleep;
@@ -24,7 +21,6 @@ public class aTaxiMain {
     static JSONArray baseMessages;
 
     static int sleepTimer, qiwiTimer, qiwiCheckTimer;
-    static PrintWriter logPrintWriter;
     static String curDir;
 
     public static void main(String[] args) throws IOException, CacheException {
@@ -33,48 +29,45 @@ public class aTaxiMain {
         FileInputStream fis = new FileInputStream(curDir + "/ataxi.properties");
         properties.load(fis);
 
-        String dataBaseURL  = "jdbc:Cache://" + properties.getProperty("db.address") + ":" + properties.getProperty("db.port") + "/" + properties.getProperty("db.namespace") + "";
+        String dataBaseURL = "jdbc:Cache://" + properties.getProperty("db.address") + ":" + properties.getProperty("db.port") + "/" + properties.getProperty("db.namespace") + "";
         String dataBaseUser = properties.getProperty("db.username");
-        String dataBasePwd  = properties.getProperty("db.password");
+        String dataBasePwd = properties.getProperty("db.password");
 
         sleepTimer = Integer.parseInt(properties.getProperty("sleepTimer"));
         qiwiTimer = Integer.parseInt(properties.getProperty("qiwiTimer"));
 
-        System.out.println(getCurDateTime() + "Properties loaded");
-        System.out.println(getCurDateTime() + "Connecting to DataBase " + dataBaseURL);
+        System.out.println(MainUtils.getCurDateTime() + "Properties loaded");
+        System.out.println(MainUtils.getCurDateTime() + "Connecting to DataBase " + dataBaseURL);
         dataBase = CacheDatabase.getDatabase(dataBaseURL, dataBaseUser, dataBasePwd);
-        System.out.println(getCurDateTime() + "Connecting to DataBase " + dataBaseURL + " success");
+        System.out.println(MainUtils.getCurDateTime() + "Connecting to DataBase " + dataBaseURL + " success");
 
         qiwiCheckTimer = 0;
 
 
-
         while (true) {
             work = false;
-            qiwiCheckTimer ++;
+            qiwiCheckTimer++;
 
-            if (qiwiCheckTimer > qiwiTimer){
+            if (qiwiCheckTimer > qiwiTimer) {
                 try {
-                    baseAnswer = new JSONObject(MainAPI.PaymentsQiwiToken(dataBase)); // (API.SMSC.GetFCMMessages(dataBase));
-                    System.out.println("start qiwi check for number " + baseAnswer.getString("phone") + " with token " + baseAnswer.getString("token"));
+                    baseAnswer = new JSONObject(MainAPI.PaymentsQiwiToken(dataBase));
+                    MainUtils.getInstance().printFileLog("qiwi", "start qiwi check for number " + baseAnswer.getString("phone") + " with token " + baseAnswer.getString("token"), true);
                     String qiwiNumber = baseAnswer.getString("phone");
-                    String urlString = "https://edge.qiwi.com/payment-history/v2/persons/" + qiwiNumber +"/payments?rows=50";
+                    String urlString = "https://edge.qiwi.com/payment-history/v2/persons/" + qiwiNumber + "/payments?rows=50";
                     JSONObject respJSON = httpGet(urlString, "Bearer " + baseAnswer.getString("token"));
-                    if (respJSON.has("data")){
+                    if (respJSON.has("data")) {
                         JSONArray data = respJSON.getJSONArray("data");
-                        // System.out.println(data);
-                        for (int itemID = 0; itemID < data.length(); itemID ++){
+                        for (int itemID = 0; itemID < data.length(); itemID++) {
                             JSONObject payment = data.getJSONObject(itemID);
-                            if ((payment.getInt("errorCode") == 0) & (payment.getString("type").equals("IN"))){
-                                // System.out.println(payment);
+                            if ((payment.getInt("errorCode") == 0) & (payment.getString("type").equals("IN"))) {
                                 String res = MainAPI.PaymentsQiwi(dataBase, String.valueOf(payment.getInt("txnId")),
                                         qiwiNumber,
                                         payment.getString("date"),
                                         String.valueOf(payment.get("comment")),
                                         String.valueOf(payment.getJSONObject("total").getInt("amount"))
                                 );
-                                if (!res.equals("3")){
-                                    System.out.println(payment);
+                                if (!res.equals("3")) {
+                                    MainUtils.getInstance().printFileLog("qiwi", payment.toString(), true);
                                 }
 
                             }
@@ -82,39 +75,53 @@ public class aTaxiMain {
                     }
                     qiwiCheckTimer = 0;
                     work = true;
+                    MainUtils.getInstance().printFileLogSeparator("qiwi");
                 } catch (Exception e) {
-                    System.out.println(e.toString());
+                    MainUtils.getInstance().printException("qiwi", e);
                 }
             }
 
 
             if (!work) {
                 try {
-                    baseAnswer = new JSONObject(API.SMSC.GetFCMMessages(dataBase));
+                    baseAnswer = new JSONObject(MainAPI.MessagesFirebase(dataBase));
                     if (baseAnswer.getInt("count") > 0) {
-                        System.out.println("FCM send");
                         work = true;
                         baseMessages = baseAnswer.getJSONArray("messages");
                         for (int itemID = 0; itemID < baseMessages.length(); itemID++) {
                             baseMessage = baseMessages.getJSONObject(itemID);
-                            System.out.println(baseMessage);
+                            MainUtils.getInstance().printFileLog("fcm", baseMessage.toString(), true);
+
 
                             JSONObject message = new JSONObject();
                             message.put("to", baseMessage.getString("destenation"));
+
+                            JSONObject notification = new JSONObject();
                             if (!baseMessage.getString("body").equals("")) {
-                                JSONObject notification = new JSONObject();
-                                notification.put("title", baseMessage.getString("title"));
                                 notification.put("body", baseMessage.getString("body"));
-                                message.put("notification", notification);
                             }
-                            JSONObject respJSON = httpPost("https://fcm.googleapis.com/fcm/send", message.toString(), "key=" + baseMessage.getString("key"));
-                            System.out.println("response: " + respJSON.toString());
-                            API.SMSC.SetSended(dataBase, baseMessage.getString("id"), "0", "0", "0");
+                            if (!baseMessage.getString("title").equals("")) {
+                                notification.put("title", baseMessage.getString("title"));
+                            }
+                            message.put("notification", notification);
+                            MainUtils.getInstance().printFileLog("fcm", message.toString(), true);
+                            JSONObject respJSON = MainUtils.httpPost("https://fcm.googleapis.com/fcm/send", message.toString(), "key=" + baseMessage.getString("key"));
+                            MainUtils.getInstance().printFileLog("fcm", respJSON.toString(), true);
+
+                            if (respJSON.getString("status").equals("OK")) {
+                                if (MainUtils.JSONGetString(respJSON, "success").equals("1")) {
+                                    MainAPI.MessagesSetSended(dataBase, baseMessage.getString("id"));
+                                } else {
+                                    MainAPI.MessagesSetNotSended(dataBase, baseMessage.getString("id"), "");
+                                }
+                            } else {
+                                MainAPI.MessagesSetNotSended(dataBase, baseMessage.getString("id"), respJSON.getString("error"));
+                            }
 
                         } // for (int itemID = 0; itemID < baseMessages.length(); itemID++){
                     } // if (work && baseAnswer.getInt("count") > 0){
                 } catch (Exception e) {
-                    System.out.println("!" + e.toString());
+                    MainUtils.getInstance().printException("fcm", e);
                 }
             } // if (!work){
 
@@ -122,23 +129,23 @@ public class aTaxiMain {
                 try {
                     baseAnswer = new JSONObject(API.SMSC.GetMessages(dataBase));
                     if (baseAnswer.getInt("count") > 0) {
-                        System.out.println("SMS send");
                         work = true;
                         baseMessages = baseAnswer.getJSONArray("messages");
                         for (int itemID = 0; itemID < baseMessages.length(); itemID++) {
                             baseMessage = baseMessages.getJSONObject(itemID);
-                            System.out.println(baseMessage);
+                            MainUtils.getInstance().printFileLog("smsc", baseAnswer.toString(), true);
                             String urlString = "http://smsc.ru/sys/send.php?login=" + baseMessage.getString("login") + "&psw=" + baseMessage.getString("psw") +
                                     "&phones=" + baseMessage.getString("phone") + "&mes=" + URLEncoder.encode(baseMessage.getString("message"), java.nio.charset.StandardCharsets.UTF_8.toString()) + "&cost=3&fmt=3&id=" + baseMessage.getString("id");
                             JSONObject respJSON = httpGet(urlString);
-                            System.out.println("response: " + respJSON.toString());
+                            MainUtils.getInstance().printFileLog("smsc", respJSON.toString(), true);
                             if (respJSON.has("id")) {
                                 API.SMSC.SetSended(dataBase, String.valueOf(respJSON.getInt("id")), String.valueOf(respJSON.getInt("cnt")), respJSON.getString("cost"), respJSON.getString("balance"));
                             }
+                            MainUtils.getInstance().printFileLogSeparator("smsc");
                         } // for (int itemID = 0; itemID < baseMessages.length(); itemID++){
                     } // if (work && baseAnswer.getInt("count") > 0){
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    MainUtils.getInstance().printException("smsc", e);
                 }
             } // СМС на отправку
 
@@ -146,24 +153,24 @@ public class aTaxiMain {
                 try {
                     baseAnswer = new JSONObject(API.SMSC.GetMessagesForCheckStatus(dataBase));
                     if (baseAnswer.getInt("count") > 0) {
-                        System.out.println("SMS check status");
                         work = true;
                         baseMessages = baseAnswer.getJSONArray("messages");
                         for (int itemID = 0; itemID < baseMessages.length(); itemID++) {
                             baseMessage = baseMessages.getJSONObject(itemID);
-                            System.out.println(baseMessage);
+                            MainUtils.getInstance().printFileLog("smsc", baseAnswer.toString(), true);
                             String urlString = "http://smsc.ru/sys/status.php?login=" + baseMessage.getString("login") + "&psw=" + baseMessage.getString("psw") +
                                     "&phone=" + baseMessage.getString("phone") + "&fmt=3&id=" + baseMessage.getString("id");
                             JSONObject respJSON = httpGet(urlString);
-                            System.out.println("response: " + respJSON.toString());
+                            MainUtils.getInstance().printFileLog("smsc", respJSON.toString(), true);
                             if (respJSON.has("status")) {
                                 API.SMSC.SetStatus(dataBase, baseMessage.getString("id"), String.valueOf(respJSON.getInt("status")), "");
                             }
+                            MainUtils.getInstance().printFileLogSeparator("smsc");
                         } // for (int itemID = 0; itemID < baseMessages.length(); itemID++){
                         work = true;
                     } // if (work && baseAnswer.getInt("count") > 0){
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    MainUtils.getInstance().printException("smsc", e);
                 }
             } // Если сообщений на отправку нет, то проверяем на доставку сообщений
 
@@ -174,20 +181,21 @@ public class aTaxiMain {
                     JSONArray results = baseAnswer.getJSONArray("result");
                     for (int itemID = 0; itemID < results.length(); itemID++) {
                         JSONObject dist = results.getJSONObject(itemID);
-                        System.out.println(dist);
+                        MainUtils.getInstance().printFileLog("distance", dist.toString(), true);
                         String urlString = "http://geo.toptaxi.org/distance/cache?blt=" + dist.getString("blt") + "&bln=" + dist.getString("bln") + "&elt=" + dist.getString("elt") + "&eln=" + dist.getString("eln");
                         JSONObject respJSON = httpGet(urlString);
-                        System.out.println("response: " + respJSON.toString());
+                        MainUtils.getInstance().printFileLog("distance", respJSON.toString(), true);
                         if (respJSON.getString("status").equals("OK")) {
                             JSONObject result = respJSON.getJSONObject("result");
-                            API.SMSC.SetDistance(dataBase, dist.getString("id"), result.getString("distance"), result.getString("status"));
+                            API.SMSC.SetDistance(dataBase, dist.getString("id"), MainUtils.JSONGetString(result, "distance"), MainUtils.JSONGetString(result, "status"));
                         } else {
                             API.SMSC.SetDistance(dataBase, dist.getString("id"), "-1", respJSON.getString("status"));
                         }
+                        MainUtils.getInstance().printFileLogSeparator("distance");
                         work = true;
                     } // for (int itemID = 0; itemID < results.length(); itemID++){
                 } catch (Exception e) {
-                    System.out.println(e.toString());
+                    MainUtils.getInstance().printException("distance", e);
                 }
             }
 
@@ -199,11 +207,9 @@ public class aTaxiMain {
                     JSONArray results = baseAnswer.getJSONArray("result");
                     for (int itemID = 0; itemID < results.length(); itemID++) {
                         JSONObject dist = results.getJSONObject(itemID);
-                        System.out.println(dist);
 
                         String urlString = "http://geo.toptaxi.org/geocode/driver?lt=" + dist.getString("lt") + "&ln=" + dist.getString("ln");
                         JSONObject respJSON = httpGet(urlString);
-                        System.out.println("response: " + respJSON.toString());
 
                         if (respJSON.getString("status").equals("OK")) {
                             JSONObject result = respJSON.getJSONObject("result");
@@ -215,55 +221,17 @@ public class aTaxiMain {
                         work = true;
                     } // for (int itemID = 0; itemID < results.length(); itemID++){
                 } catch (Exception e) {
-                    System.out.println(e.toString());
+                    MainUtils.getInstance().printException("gpsMonitorGeocoding", e);
                 }
             }
-
-
-
 
             try {
                 sleep(sleepTimer * 1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                MainUtils.getInstance().printException("sleep", e);
             }
         }// while (true) {
 
-    }
-
-    private static PrintWriter getLogPrintWriter() throws FileNotFoundException {
-        if (logPrintWriter == null) {
-            String logFileName = curDir + "/log/" + getCurDateTime().replace(" ", "_").replace(":", "_").replace("-", "_") + "log.txt";// + String.format("%s%s", getCurDateTime(), "log.txt");
-            logPrintWriter = new PrintWriter(new File(logFileName));
-        }
-        return logPrintWriter;
-    }
-
-    static String getCurDateTime() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " ";
-    }
-
-    static JSONObject httpPost(String urlString, String body, String Authorization) {
-        JSONObject result = new JSONObject();
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            if (!Authorization.equals("")) {
-                conn.setRequestProperty("Authorization", Authorization);
-            }
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json; utf-8");
-            conn.setDoOutput(true);
-            OutputStream os = conn.getOutputStream();
-            byte[] input = body.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-            InputStream inputStream = conn.getInputStream();
-            String resp = IOUtils.toString(inputStream);
-            result = new JSONObject(resp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     static JSONObject httpGet(String urlString, String Authorization) {
@@ -300,6 +268,5 @@ public class aTaxiMain {
         }
         return result;
     }
-
 
 }

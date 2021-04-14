@@ -7,8 +7,8 @@ package API;
  * @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI</A>
 **/
 
-public class MainAPI extends com.intersys.classes.RegisteredObject implements java.io.Serializable {
-    private static final long serialVersionUID = 6496;
+public class MainAPI extends API.JSON implements java.io.Serializable {
+    private static final long serialVersionUID = 2057;
     private static String CACHE_CLASS_NAME = "API.MainAPI";
     /**
            <p>NB: DO NOT USE IN APPLICATION(!!!).
@@ -90,22 +90,6 @@ public class MainAPI extends com.intersys.classes.RegisteredObject implements ja
     public static void checkAllMethods(com.intersys.objects.Database db ) throws com.intersys.objects.CacheException {
         checkAllMethods(db, CACHE_CLASS_NAME, MainAPI.class);
     }
-    public static void check__OIDValid (com.intersys.objects.Database db) throws com.intersys.objects.CacheException {
-    }
-    /**
-       Returns value of property <code>__OID</code>.
-       <p>Description: Serial value of object or the object identity</p>
-       @return current value of <code>__OID</code> represented as
-       <code>java.lang.String</code>
-
-       @throws com.intersys.objects.CacheException if any error occurred during value retrieval.
-       @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#__OID"> __OID</A>
-    */
-    public java.lang.String get__OID()  throws com.intersys.objects.CacheException {
-       com.intersys.cache.Dataholder dh = mInternal.getProperty("%%OID",false);
-       return dh.getString();
-    }
-
     /**
      <p>Runs method %ClassName in Cache.</p>
      <p>Description: Returns the object's class name. The <var>fullname</var> determines how the
@@ -365,6 +349,118 @@ That is 'isclass' is a primary superclass of this object.</p>
         args[4] = new com.intersys.cache.Dataholder(inDistance);
         args[5] = new com.intersys.cache.Dataholder(inStatus);
         com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MapDistanceSet",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessageFirebase in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inClassID represented as java.lang.String
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessageFirebase"> Method MessageFirebase</A>
+    */
+    public static java.lang.String MessageFirebase (com.intersys.objects.Database db, java.lang.String inClassID) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[1];
+        args[0] = new com.intersys.cache.Dataholder(inClassID);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessageFirebase",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessagesFirebase in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessagesFirebase"> Method MessagesFirebase</A>
+    */
+    public static java.lang.String MessagesFirebase (com.intersys.objects.Database db) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[0];
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessagesFirebase",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessagesSetNotSended in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inClassID represented as java.lang.String
+     @param inNote represented as java.lang.String
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessagesSetNotSended"> Method MessagesSetNotSended</A>
+    */
+    public static java.lang.String MessagesSetNotSended (com.intersys.objects.Database db, java.lang.String inClassID, java.lang.String inNote) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[2];
+        args[0] = new com.intersys.cache.Dataholder(inClassID);
+        args[1] = new com.intersys.cache.Dataholder(inNote);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessagesSetNotSended",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessagesSetSended in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inClassID represented as java.lang.String
+     default argument inCount set to ""
+     default argument inCost set to ""
+     default argument inBalance set to ""
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see #MessagesSetSended(com.intersys.objects.Database,java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessagesSetSended"> Method MessagesSetSended</A>
+    */
+    public static java.lang.String MessagesSetSended (com.intersys.objects.Database db, java.lang.String inClassID) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[1];
+        args[0] = new com.intersys.cache.Dataholder(inClassID);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessagesSetSended",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessagesSetSended in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inClassID represented as java.lang.String
+     @param inCount represented as java.lang.String
+     default argument inCost set to ""
+     default argument inBalance set to ""
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see #MessagesSetSended(com.intersys.objects.Database,java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessagesSetSended"> Method MessagesSetSended</A>
+    */
+    public static java.lang.String MessagesSetSended (com.intersys.objects.Database db, java.lang.String inClassID, java.lang.String inCount) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[2];
+        args[0] = new com.intersys.cache.Dataholder(inClassID);
+        args[1] = new com.intersys.cache.Dataholder(inCount);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessagesSetSended",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessagesSetSended in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inClassID represented as java.lang.String
+     @param inCount represented as java.lang.String
+     @param inCost represented as java.lang.String
+     default argument inBalance set to ""
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see #MessagesSetSended(com.intersys.objects.Database,java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessagesSetSended"> Method MessagesSetSended</A>
+    */
+    public static java.lang.String MessagesSetSended (com.intersys.objects.Database db, java.lang.String inClassID, java.lang.String inCount, java.lang.String inCost) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[3];
+        args[0] = new com.intersys.cache.Dataholder(inClassID);
+        args[1] = new com.intersys.cache.Dataholder(inCount);
+        args[2] = new com.intersys.cache.Dataholder(inCost);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessagesSetSended",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
+     <p>Runs method MessagesSetSended in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inClassID represented as java.lang.String
+     @param inCount represented as java.lang.String
+     @param inCost represented as java.lang.String
+     @param inBalance represented as java.lang.String
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.MainAPI#MessagesSetSended"> Method MessagesSetSended</A>
+    */
+    public static java.lang.String MessagesSetSended (com.intersys.objects.Database db, java.lang.String inClassID, java.lang.String inCount, java.lang.String inCost, java.lang.String inBalance) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[4];
+        args[0] = new com.intersys.cache.Dataholder(inClassID);
+        args[1] = new com.intersys.cache.Dataholder(inCount);
+        args[2] = new com.intersys.cache.Dataholder(inCost);
+        args[3] = new com.intersys.cache.Dataholder(inBalance);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"MessagesSetSended",args,com.intersys.objects.Database.RET_PRIM);
         return res.getString();
     }
     /**

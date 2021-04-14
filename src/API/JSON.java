@@ -8,7 +8,7 @@ package API;
 **/
 
 public class JSON extends com.intersys.classes.RegisteredObject implements java.io.Serializable {
-    private static final long serialVersionUID = 4996;
+    private static final long serialVersionUID = 3350;
     private static String CACHE_CLASS_NAME = "API.JSON";
     /**
            <p>NB: DO NOT USE IN APPLICATION(!!!).
@@ -154,6 +154,19 @@ That is 'isclass' is a primary superclass of this object.</p>
         return;
     }
     /**
+     <p>Runs method FromUTF in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inText represented as java.lang.String
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#FromUTF"> Method FromUTF</A>
+    */
+    public static java.lang.String FromUTF (com.intersys.objects.Database db, java.lang.String inText) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[1];
+        args[0] = new com.intersys.cache.Dataholder(inText);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"FromUTF",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
+    }
+    /**
      <p>Runs method GUID in Cache.</p>
      @param db represented as com.intersys.objects.Database
      @throws com.intersys.objects.CacheException if any error occured while running the method.
@@ -178,12 +191,27 @@ That is 'isclass' is a primary superclass of this object.</p>
         return res.getString();
     }
     /**
+     <p>Runs method SQLQeurySet in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inSQL represented as java.lang.String
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#SQLQeurySet"> Method SQLQeurySet</A>
+    */
+    public static void SQLQeurySet (com.intersys.objects.Database db, java.lang.String inSQL) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[1];
+        args[0] = new com.intersys.cache.Dataholder(inSQL);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"SQLQeurySet",args,com.intersys.objects.Database.RET_NONE);
+        return;
+    }
+    /**
      <p>Runs method addField in Cache.</p>
      @param db represented as com.intersys.objects.Database
      @param inGUID represented as java.lang.String
      @param inFieldName represented as java.lang.String
      @param inFieldValue represented as java.lang.String
+     default argument inReplace set to 1
      @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see #addField(com.intersys.objects.Database,java.lang.String,java.lang.String,java.lang.String,java.lang.Integer)
      @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#addField"> Method addField</A>
     */
     public static void addField (com.intersys.objects.Database db, java.lang.String inGUID, java.lang.String inFieldName, java.lang.String inFieldValue) throws com.intersys.objects.CacheException {
@@ -191,6 +219,25 @@ That is 'isclass' is a primary superclass of this object.</p>
         args[0] = new com.intersys.cache.Dataholder(inGUID);
         args[1] = new com.intersys.cache.Dataholder(inFieldName);
         args[2] = new com.intersys.cache.Dataholder(inFieldValue);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"addField",args,com.intersys.objects.Database.RET_NONE);
+        return;
+    }
+    /**
+     <p>Runs method addField in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inGUID represented as java.lang.String
+     @param inFieldName represented as java.lang.String
+     @param inFieldValue represented as java.lang.String
+     @param inReplace represented as java.lang.Integer
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#addField"> Method addField</A>
+    */
+    public static void addField (com.intersys.objects.Database db, java.lang.String inGUID, java.lang.String inFieldName, java.lang.String inFieldValue, java.lang.Integer inReplace) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[4];
+        args[0] = new com.intersys.cache.Dataholder(inGUID);
+        args[1] = new com.intersys.cache.Dataholder(inFieldName);
+        args[2] = new com.intersys.cache.Dataholder(inFieldValue);
+        args[3] = new com.intersys.cache.Dataholder(inReplace);
         com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"addField",args,com.intersys.objects.Database.RET_NONE);
         return;
     }
@@ -217,7 +264,9 @@ That is 'isclass' is a primary superclass of this object.</p>
      @param inGUID represented as java.lang.String
      @param inFieldName represented as java.lang.String
      @param inFieldValue represented as java.lang.String
+     default argument inIsGUID set to 0
      @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see #addToArray(com.intersys.objects.Database,java.lang.String,java.lang.String,java.lang.String,java.lang.Integer)
      @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#addToArray"> Method addToArray</A>
     */
     public static void addToArray (com.intersys.objects.Database db, java.lang.String inGUID, java.lang.String inFieldName, java.lang.String inFieldValue) throws com.intersys.objects.CacheException {
@@ -229,13 +278,34 @@ That is 'isclass' is a primary superclass of this object.</p>
         return;
     }
     /**
+     <p>Runs method addToArray in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inGUID represented as java.lang.String
+     @param inFieldName represented as java.lang.String
+     @param inFieldValue represented as java.lang.String
+     @param inIsGUID represented as java.lang.Integer
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#addToArray"> Method addToArray</A>
+    */
+    public static void addToArray (com.intersys.objects.Database db, java.lang.String inGUID, java.lang.String inFieldName, java.lang.String inFieldValue, java.lang.Integer inIsGUID) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[4];
+        args[0] = new com.intersys.cache.Dataholder(inGUID);
+        args[1] = new com.intersys.cache.Dataholder(inFieldName);
+        args[2] = new com.intersys.cache.Dataholder(inFieldValue);
+        args[3] = new com.intersys.cache.Dataholder(inIsGUID);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"addToArray",args,com.intersys.objects.Database.RET_NONE);
+        return;
+    }
+    /**
      <p>Runs method addToNamedArray in Cache.</p>
      @param db represented as com.intersys.objects.Database
      @param inGUID represented as java.lang.String
      @param inArrayName represented as java.lang.String
      @param inFieldName represented as java.lang.String
      @param inFieldValue represented as java.lang.String
+     default argument inIsGUID set to 0
      @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see #addToNamedArray(com.intersys.objects.Database,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.Integer)
      @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#addToNamedArray"> Method addToNamedArray</A>
     */
     public static void addToNamedArray (com.intersys.objects.Database db, java.lang.String inGUID, java.lang.String inArrayName, java.lang.String inFieldName, java.lang.String inFieldValue) throws com.intersys.objects.CacheException {
@@ -246,5 +316,39 @@ That is 'isclass' is a primary superclass of this object.</p>
         args[3] = new com.intersys.cache.Dataholder(inFieldValue);
         com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"addToNamedArray",args,com.intersys.objects.Database.RET_NONE);
         return;
+    }
+    /**
+     <p>Runs method addToNamedArray in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inGUID represented as java.lang.String
+     @param inArrayName represented as java.lang.String
+     @param inFieldName represented as java.lang.String
+     @param inFieldValue represented as java.lang.String
+     @param inIsGUID represented as java.lang.Integer
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#addToNamedArray"> Method addToNamedArray</A>
+    */
+    public static void addToNamedArray (com.intersys.objects.Database db, java.lang.String inGUID, java.lang.String inArrayName, java.lang.String inFieldName, java.lang.String inFieldValue, java.lang.Integer inIsGUID) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[5];
+        args[0] = new com.intersys.cache.Dataholder(inGUID);
+        args[1] = new com.intersys.cache.Dataholder(inArrayName);
+        args[2] = new com.intersys.cache.Dataholder(inFieldName);
+        args[3] = new com.intersys.cache.Dataholder(inFieldValue);
+        args[4] = new com.intersys.cache.Dataholder(inIsGUID);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"addToNamedArray",args,com.intersys.objects.Database.RET_NONE);
+        return;
+    }
+    /**
+     <p>Runs method replValue in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @param inValue represented as java.lang.String
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.JSON#replValue"> Method replValue</A>
+    */
+    public static java.lang.String replValue (com.intersys.objects.Database db, java.lang.String inValue) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[1];
+        args[0] = new com.intersys.cache.Dataholder(inValue);
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"replValue",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
     }
 }
