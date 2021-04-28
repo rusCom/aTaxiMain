@@ -16,20 +16,7 @@ import java.util.Properties;
 public class MainUtils {
     private String curDir, severType;
     private Map<String, PrintWriter> printWriterMap;
-    private static volatile MainUtils instance;
-
-    public static MainUtils getInstance() throws IOException {
-        MainUtils localInstance = instance;
-        if (localInstance == null) {
-            synchronized (MainUtils.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new MainUtils();
-                }
-            }
-        }
-        return localInstance;
-    }
+    private Boolean consoleLog;
 
     public MainUtils() throws IOException {
         printWriterMap = new HashMap<String, PrintWriter>();
@@ -38,6 +25,7 @@ public class MainUtils {
         FileInputStream fis = new FileInputStream(curDir + "/server.properties");
         properties.load(fis);
         severType = properties.getProperty("server.type");
+        consoleLog = Boolean.valueOf(properties.getProperty("server.consoleLog"));
 
         new File(curDir + "/log/").mkdir();
 
@@ -53,7 +41,11 @@ public class MainUtils {
             logString = getCurDateTime() + logString;
         }
         getLogPrintWriter(logType).println(logString);
+        if (consoleLog){
+            System.out.println(logType + " - " + logString);
+        }
         getLogPrintWriter(logType).flush();
+
     }
 
     public void printException(String logType, Exception exception) throws FileNotFoundException {
@@ -129,6 +121,41 @@ public class MainUtils {
         } catch (IOException e) {
             result.put("status", "error");
             result.put("error", e.getMessage());
+        }
+        return result;
+    }
+
+    static JSONObject httpGet(String urlString) {
+        JSONObject result = new JSONObject();
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setDoOutput(true);
+            InputStream inputStream = conn.getInputStream();
+            String resp = IOUtils.toString(inputStream);
+            result = new JSONObject(resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    static JSONObject httpGet(String urlString, String Authorization) {
+        JSONObject result = new JSONObject();
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            if (!Authorization.equals("")) {
+                conn.setRequestProperty("Authorization", Authorization);
+            }
+            conn.setRequestMethod("GET");
+            conn.setDoOutput(true);
+            InputStream inputStream = conn.getInputStream();
+            String resp = IOUtils.toString(inputStream);
+            result = new JSONObject(resp);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
