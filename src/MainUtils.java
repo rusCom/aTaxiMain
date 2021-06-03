@@ -93,7 +93,13 @@ public class MainUtils {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if (!authorization.equals("")) {
-                conn.setRequestProperty("Authorization", authorization);
+                if (urlString.contains("taxsee.com")){
+                    conn.setRequestProperty("X-API-KEY", authorization);
+                }
+                else {
+                    conn.setRequestProperty("Authorization", authorization);
+                }
+
             }
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestMethod("POST");

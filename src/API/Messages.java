@@ -8,7 +8,7 @@ package API;
 **/
 
 public class Messages extends API.JSON implements java.io.Serializable {
-    private static final long serialVersionUID = 7048;
+    private static final long serialVersionUID = 2852;
     private static String CACHE_CLASS_NAME = "API.Messages";
     /**
            <p>NB: DO NOT USE IN APPLICATION(!!!).
@@ -200,6 +200,17 @@ That is 'isclass' is a primary superclass of this object.</p>
         com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[0];
         com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"Initialize",args,com.intersys.objects.Database.RET_NONE);
         return;
+    }
+    /**
+     <p>Runs method Insurance in Cache.</p>
+     @param db represented as com.intersys.objects.Database
+     @throws com.intersys.objects.CacheException if any error occured while running the method.
+     @see <a href = "http://WIN-SXXN5RR5F37:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=API.Messages#Insurance"> Method Insurance</A>
+    */
+    public static java.lang.String Insurance (com.intersys.objects.Database db) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[0];
+        com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"Insurance",args,com.intersys.objects.Database.RET_PRIM);
+        return res.getString();
     }
     /**
      <p>Runs method MessageFirebase in Cache.</p>
